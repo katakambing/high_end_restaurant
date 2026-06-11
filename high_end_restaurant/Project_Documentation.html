@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>High-End Restaurant - Project Documentation</title>
+<style>
+  body { font-family: Calibri, sans-serif; margin: 40px; line-height: 1.6; color: #333; }
+  h1 { color: #2c3e50; border-bottom: 3px solid #8e44ad; padding-bottom: 10px; font-size: 28px; }
+  h2 { color: #8e44ad; margin-top: 30px; font-size: 22px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+  h3 { color: #2c3e50; font-size: 18px; }
+  table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+  th { background-color: #8e44ad; color: white; padding: 10px 15px; text-align: left; font-size: 14px; }
+  td { border: 1px solid #ddd; padding: 10px 15px; font-size: 13px; }
+  tr:nth-child(even) { background-color: #f9f9f9; }
+  pre { background-color: #f4f4f4; padding: 20px; border: 1px solid #ddd; border-radius: 5px; font-family: Consolas, monospace; font-size: 13px; overflow-x: auto; white-space: pre; }
+  .check { color: green; font-weight: bold; }
+  .section { margin-bottom: 30px; page-break-inside: avoid; }
+  ul { margin: 5px 0; }
+  li { margin: 3px 0; }
+</style>
+</head>
+<body>
+
+<h1>High-End Restaurant Reservation System</h1>
+<p><strong>Project Type:</strong> Flutter Mobile Application (Android)<br>
+<strong>Database:</strong> Cloud Firestore (Firebase)<br>
+<strong>Architecture:</strong> Service-based with Role-Based Access Control (Guest / User / Admin)</p>
+
+<!-- ============ SECTION A ============ -->
+<h2>Section A: Requirements Compliance Check</h2>
+
+<table>
+  <tr>
+    <th>#</th>
+    <th>Requirement</th>
+    <th>Status</th>
+    <th>Implementation Details</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Guest Page with menu packages</td>
+    <td class="check">&#10004;</td>
+    <td><code>GuestHome</code> — Visually appealing cards with images, descriptions, and prices. Accessible without login.</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Guide to register/login</td>
+    <td class="check">&#10004;</td>
+    <td>"Log In" button in guest banner. Snackbar prompts login when guest taps "Book Now".</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Separate/unified login with roles</td>
+    <td class="check">&#10004;</td>
+    <td>Firebase Auth + Firestore <code>role</code> field. <code>Root</code> widget checks role and routes to User Home, Admin Home, or Guest Home.</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Menu browsing (User)</td>
+    <td class="check">&#10004;</td>
+    <td><code>HomeScreen</code> with search bar and category ChoiceChips filter (All, Burgers, Snacks, Drinks).</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Booking form (date, time, guests)</td>
+    <td class="check">&#10004;</td>
+    <td><code>BookingPage</code> — Native date picker, time picker, +/- guest counter with real-time updates.</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>Real-time price: (base × guests) + service charge</td>
+    <td class="check">&#10004;</td>
+    <td><code>BookingPage</code> calculates: <code>baseTotal = price × guests</code>, <code>serviceCharge = baseTotal × 10%</code>, <code>grandTotal = baseTotal + serviceCharge</code>. Displayed in price breakdown card.</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>Summary & Confirmation screen</td>
+    <td class="check">&#10004;</td>
+    <td><code>BookingConfirmationPage</code> — Success icon, full booking summary card (package, date, time, guests, total, status), and "Back to Home" button.</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>View My Reservations</td>
+    <td class="check">&#10004;</td>
+    <td><code>MyReservationsPage</code> — <code>BookingCard</code> widget displays Event Date, Menu Package Name, Number of Guests, Total Price, Status badge.</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td>Update reservations (re-pricing, change package)</td>
+    <td class="check">&#10004;</td>
+    <td><code>EditBookingPage</code> — Dropdown to change menu package, date/time pickers, +/- guest counter with live re-pricing including service charge.</td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td>Delete with confirmation dialog</td>
+    <td class="check">&#10004;</td>
+    <td>AlertDialog confirmation before deletion in <code>MyReservationsPage</code>.</td>
+  </tr>
+  <tr>
+    <td>11</td>
+    <td>Admin CRUD menu packages</td>
+    <td class="check">&#10004;</td>
+    <td><code>ManageMenuPage</code> (Read/Delete), <code>AddMenuPage</code> (Create), <code>EditMenuPage</code> (Update with name, description, price, image URL, category).</td>
+  </tr>
+  <tr>
+    <td>12</td>
+    <td>Admin manage user accounts</td>
+    <td class="check">&#10004;</td>
+    <td><code>ManageUsersPage</code> — StreamBuilder lists all users from Firestore with email, role badge, and delete capability with confirmation.</td>
+  </tr>
+  <tr>
+    <td>13</td>
+    <td>Admin manage all customer reservations</td>
+    <td class="check">&#10004;</td>
+    <td><code>AdminBookingsPage</code> — View all bookings. Approve/Reject pending bookings, Complete/Cancel approved bookings. Delete any booking with confirmation.</td>
+  </tr>
+  <tr>
+    <td>14</td>
+    <td>Search / Filter functions</td>
+    <td class="check">&#10004;</td>
+    <td>Search bar (real-time filtering by name) + Category ChoiceChips on both <code>GuestHome</code> and <code>HomeScreen</code>.</td>
+  </tr>
+  <tr>
+    <td>15</td>
+    <td>≥ 3 third-party packages</td>
+    <td class="check">&#10004;</td>
+    <td>7 packages: <code>firebase_core</code>, <code>firebase_auth</code>, <code>cloud_firestore</code>, <code>intl</code> (date formatting), <code>cached_network_image</code> (image caching), <code>google_fonts</code> (typography), <code>flutter_svg</code> (SVG support).</td>
+  </tr>
+  <tr>
+    <td>16</td>
+    <td>At least 1 database product</td>
+    <td class="check">&#10004;</td>
+    <td>Cloud Firestore with collections: <code>menu</code>, <code>users</code>, <code>bookings</code>.</td>
+  </tr>
+</table>
+
+<!-- ============ SECTION B ============ -->
+<h2>Section B: Application Flow</h2>
+
+<pre>
+┌─────────────────────────────────────────────────────────────┐
+│                      APP LAUNCH                              │
+│                    main.dart → Root                           │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                ┌────────▼────────┐
+                │   root.dart     │
+                │  Check Auth +   │
+                │  Role from      │
+                │  Firestore      │
+                └──┬────────┬──┬──┘
+                   │        │  │
+          ┌────────┘        │  └────────┐
+          ▼                 ▼           ▼
+    ┌──────────┐    ┌───────────┐  ┌──────────┐
+    │  GUEST   │    │   USER    │  │  ADMIN   │
+    │ GuestHome│    │ UserHome  │  │AdminHome │
+    └────┬─────┘    └─────┬─────┘  └────┬─────┘
+         │                │              │
+         │                │              ├─► Manage Menu (CRUD)
+         │                │              │   ├─► AddMenuPage
+         │                │              │   └─► EditMenuPage
+         │                │              │
+         │                │              ├─► Manage Users
+         │                │              │   └─► View/Delete users
+         │                │              │
+         │                │              └─► Manage Reservations
+         │                │                  (Approve/Reject/
+         │                │                   Complete/Cancel)
+         │                │
+         │                ├─► View Menu & Book → HomeScreen
+         │                │   ├─► Search bar (real-time)
+         │                │   ├─► Category filter chips
+         │                │   └─► Book Now → BookingPage
+         │                │       ├─► Pick Event Date
+         │                │       ├─► Pick Event Time
+         │                │       ├─► Set Guests (+/- counter)
+         │                │       ├─► Live price calculation
+         │                │       │   (base × guests + 10% service)
+         │                │       └─► Confirm Booking
+         │                │           → BookingConfirmationPage
+         │                │
+         │                └─► My Reservations
+         │                    ├─► View all bookings
+         │                    │   (BookingCard with status badges)
+         │                    ├─► Edit → EditBookingPage
+         │                    │   ├─► Change menu package
+         │                    │   ├─► Change date/time
+         │                    │   ├─► Adjust guest count
+         │                    │   └─► Live re-pricing
+         │                    └─► Delete (confirmation dialog)
+         │
+         ├─► Browse Menu (read-only, images, descriptions)
+         └─► Log In → LoginScreen
+             ├─► Forgot Password → ForgotPasswordPage
+             ├─► Create Account → RegisterPage
+             └─► Continue as Guest → GuestHome
+</pre>
+
+<!-- ============ SECTION C ============ -->
+<h2>Section C: Project Structure</h2>
+
+<pre>
+lib/
+├── main.dart                           App entry point (Firebase init, MaterialApp)
+├── firebase_options.dart               Auto-generated Firebase configuration
+│
+├── models/
+│   ├── booking_model.dart              BookingModel: id, userId, menuId, menuName,
+│   │                                     eventDate, eventTime, numGuests, totalPrice,
+│   │                                     status. Includes fromMap() and toMap().
+│   ├── menu_model.dart                 MenuModel: id, name, description, price,
+│   │                                     image, category. Includes fromMap() and toMap().
+│   ├── order.dart                      OrderItem: name, price, quantity, total.
+│   └── user_model.dart                 UserModel: uid, email, role.
+│                                         Includes fromMap() and toMap().
+│
+├── screens/
+│   ├── root.dart                       Auth + Role router. Checks FirebaseAuth
+│   │                                     currentUser, reads Firestore role field,
+│   │                                     routes to GuestHome / UserHome / AdminHome.
+│   ├── home_screen.dart                User menu browsing with search bar and
+│   │                                     category ChoiceChips filter.
+│   │
+│   ├── authentication/
+│   │   ├── login.dart                  Email/password login with Firebase Auth.
+│   │   │                                 Links: Forgot Password, Create Account,
+│   │   │                                 Continue as Guest.
+│   │   ├── register_page.dart          Email/password registration. Creates Firestore
+│   │   │                                 user doc with default "user" role.
+│   │   └── forgot_password.dart        Email input → Firebase sendPasswordResetEmail().
+│   │                                     Success confirmation screen.
+│   │
+│   ├── guest/
+│   │   └── guest_home.dart             Guest menu browsing. Search + category filter.
+│   │                                     "Log In" banner. Book Now prompts login.
+│   │
+│   ├── user/
+│   │   ├── user_home.dart              User dashboard: My Reservations, View Menu
+│   │   │                                 & Book, Logout.
+│   │   ├── booking_page.dart           Booking form: package info card, date picker,
+│   │   │                                 time picker, guest counter, price breakdown
+│   │   │                                 (base + 10% service charge), confirm button.
+│   │   ├── booking_confirmation.dart   Success screen with booking summary card.
+│   │   │                                 Back to Home button.
+│   │   ├── user_reservation.dart       My Reservations list using BookingCard widget.
+│   │   │                                 Edit and Delete with confirmation dialog.
+│   │   └── edit_booking.dart           Edit reservation: change menu package
+│   │                                     (dropdown), date, time, guests with live
+│   │                                     re-pricing. Save updates to Firestore.
+│   │
+│   └── admin/
+│       ├── admin_home.dart             Admin dashboard: Manage Menu, Manage Users,
+│       │                                 Manage Reservations, Logout.
+│       ├── manage_menu.dart            Menu list with StreamBuilder. Edit/Delete
+│       │                                 buttons. FAB to add new menu.
+│       ├── manage_users.dart           User list from Firestore. Shows email, role
+│       │                                 badge (admin/user). Delete with confirmation.
+│       ├── admin_bookings.dart         All bookings with status management.
+│       │                                 Pending → Approve/Reject.
+│       │                                 Approved → Complete/Cancel.
+│       │                                 Delete any booking.
+│       ├── add_menu_page.dart          Form: name, description, price, image URL,
+│       │                                 category. Saves to Firestore 'menu' collection.
+│       ├── edit_menu.dart              Edit all fields: name, description, price,
+│       │                                 image URL, category. Updates Firestore.
+│       └── admin_orders_page.dart      Orders management with status updates.
+│
+├── services/
+│   ├── auth_service.dart               AuthService: login(), register(), getRole(),
+│   │                                     logout(). Uses FirebaseAuth + FirebaseFirestore.
+│   ├── booking_service.dart            BookingService: createBooking(), getUserBookings(),
+│   │                                     deleteBooking(), updateBooking().
+│   │                                     Operates on 'bookings' collection.
+│   └── menu_service.dart               MenuService: getMenus(). Reads from 'menu'
+│                                         collection. Returns List<MenuModel>.
+│
+└── widgets/
+    ├── menu_card.dart                  Reusable menu card widget. Uses CachedNetworkImage
+    │                                     for image caching. Shows name, description,
+    │                                     price, category, and "Book Now" button.
+    ├── booking_cards.dart              Reusable BookingCard widget. Shows menu name,
+    │                                     status badge (color-coded), date, time, guests,
+    │                                     total price. Optional edit/delete buttons.
+    └── custom_button.dart              Reusable CustomButton widget. Supports icon,
+                                          loading state, full-width, custom colors.
+</pre>
+
+<!-- ============ SECTION D ============ -->
+<h2>Section D: Database Schema (Cloud Firestore)</h2>
+<p><strong>Database Name:</strong> <code>restaurant_package_booking</code> (Firebase Project: high-end-restaurant-6edba)</p>
+
+<h3>Collection: menu</h3>
+<table>
+  <tr><th>Field</th><th>Data Type</th><th>Description</th></tr>
+  <tr><td><strong>name</strong></td><td>String</td><td>Menu package name (e.g., "Premium Buffet")</td></tr>
+  <tr><td><strong>description</strong></td><td>String</td><td>Detailed description of the package</td></tr>
+  <tr><td><strong>price</strong></td><td>Number (double)</td><td>Price per guest in RM</td></tr>
+  <tr><td><strong>image</strong></td><td>String (URL)</td><td>URL to the menu package image</td></tr>
+  <tr><td><strong>category</strong></td><td>String</td><td>Category (e.g., "Burgers", "Snacks", "Drinks")</td></tr>
+</table>
+<p><em>Document ID: Auto-generated by Firestore</em></p>
+
+<h3>Collection: users</h3>
+<table>
+  <tr><th>Field</th><th>Data Type</th><th>Description</th></tr>
+  <tr><td><strong>email</strong></td><td>String</td><td>User's email address</td></tr>
+  <tr><td><strong>role</strong></td><td>String</td><td>User role: "user" (default) or "admin"</td></tr>
+</table>
+<p><em>Document ID: Firebase Auth UID</em></p>
+
+<h3>Collection: bookings</h3>
+<table>
+  <tr><th>Field</th><th>Data Type</th><th>Description</th></tr>
+  <tr><td><strong>userId</strong></td><td>String</td><td>Reference to users collection (Firebase Auth UID)</td></tr>
+  <tr><td><strong>menuId</strong></td><td>String</td><td>Reference to menu collection (Firestore doc ID)</td></tr>
+  <tr><td><strong>menuName</strong></td><td>String</td><td>Denormalized menu package name for display</td></tr>
+  <tr><td><strong>eventDate</strong></td><td>String</td><td>Event date in "yyyy-MM-dd" format</td></tr>
+  <tr><td><strong>eventTime</strong></td><td>String</td><td>Event time in "HH:mm" format</td></tr>
+  <tr><td><strong>numGuests</strong></td><td>Number (int)</td><td>Number of guests</td></tr>
+  <tr><td><strong>totalPrice</strong></td><td>Number (double)</td><td>Total price: (base price × guests) + 10% service charge</td></tr>
+  <tr><td><strong>status</strong></td><td>String</td><td>"pending" | "approved" | "completed" | "cancelled"</td></tr>
+</table>
+<p><em>Document ID: Auto-generated by Firestore</em></p>
+
+<!-- ============ SECTION E ============ -->
+<h2>Section E: Third-Party Packages</h2>
+
+<table>
+  <tr><th>#</th><th>Package</th><th>Version</th><th>Purpose</th><th>Category</th></tr>
+  <tr><td>1</td><td><code>firebase_core</code></td><td>^2.24.2</td><td>Firebase initialization and core SDK</td><td>Backend/Database</td></tr>
+  <tr><td>2</td><td><code>firebase_auth</code></td><td>^4.16.0</td><td>Authentication (login, register, password reset)</td><td>Security/Backend</td></tr>
+  <tr><td>3</td><td><code>cloud_firestore</code></td><td>^4.14.0</td><td>NoSQL database for menu, users, bookings</td><td>Database</td></tr>
+  <tr><td>4</td><td><code>intl</code></td><td>^0.19.0</td><td>Date formatting (DateFormat for event dates)</td><td>Utility</td></tr>
+  <tr><td>5</td><td><code>cached_network_image</code></td><td>^3.3.1</td><td>Cached image loading with placeholder and error widget</td><td>UI/Performance</td></tr>
+  <tr><td>6</td><td><code>google_fonts</code></td><td>^6.1.0</td><td>Google Fonts typography for premium UI</td><td>UI/Design</td></tr>
+  <tr><td>7</td><td><code>flutter_svg</code></td><td>^2.0.9</td><td>SVG rendering support</td><td>UI/Design</td></tr>
+</table>
+
+<!-- ============ SECTION F ============ -->
+<h2>Section F: Key Features</h2>
+
+<h3>Security Features</h3>
+<ul>
+  <li>Firebase Authentication with email/password</li>
+  <li>Role-Based Access Control (RBAC) — users routed based on Firestore role field</li>
+  <li>Guest users cannot make bookings (must login/register)</li>
+  <li>Admin-only pages protected by role check</li>
+  <li>Forgot Password via Firebase email reset</li>
+</ul>
+
+<h3>User Experience Features</h3>
+<ul>
+  <li>Cached network images for fast loading</li>
+  <li>Real-time search filtering</li>
+  <li>Category-based filtering with ChoiceChips</li>
+  <li>Native date and time pickers</li>
+  <li>Real-time price calculation with service charge breakdown</li>
+  <li>Color-coded booking status badges (Pending=Orange, Approved=Green, Completed=Blue, Cancelled=Red)</li>
+  <li>Confirmation dialogs for destructive actions</li>
+  <li>Success confirmation screen after booking</li>
+</ul>
+
+</body>
+</html>

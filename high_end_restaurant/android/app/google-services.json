@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "644129433236",
+    "project_id": "high-end-restaurant-6edba",
+    "storage_bucket": "high-end-restaurant-6edba.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644129433236:android:065c321dad86adb0daf681",
+        "android_client_info": {
+          "package_name": "com.example.high_end_restaurant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAG_8089B2JXbXPtZHwdymGIeoNIylfazY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
