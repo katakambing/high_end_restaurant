@@ -141,12 +141,6 @@ class _DashboardView extends StatelessWidget {
                   color: Colors.orange,
                   onTap: () {},
                 ),
-                _DashboardCard(
-                  icon: Icons.analytics,
-                  label: "Analytics",
-                  color: Colors.green,
-                  onTap: () {},
-                ),
               ],
             ),
           ),
